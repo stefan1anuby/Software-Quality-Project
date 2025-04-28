@@ -1,48 +1,83 @@
-from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from fastapi import HTTPException
 
-from app.core.database import get_db
-
-from app.schemas.teacher import TeacherCreate, TeacherRead
+from app.repository.teacher_repository import TeacherRepository
+from app.repository.room_repository import RoomRepository
+from app.repository.schedule_entry_repository import ScheduleEntryRepository
+from app.schemas.teacher import TeacherCreate
 from app.schemas.schedule_entry import ScheduleEntryCreate
+from app.models.room import Room
 
-from app.models.schedule_entry import ScheduleEntry
+class TimetableService:
+    def __init__(self, db: Session):
+        self.db = db
+        self.teacher_repo = TeacherRepository(db)
+        self.room_repo = RoomRepository(db)
+        self.schedule_repo = ScheduleEntryRepository(db)
 
-from app.repository.teacher_repository import create_teacher, get_teacher_by_name
+    def create_schedule_entry(self, entry_data: ScheduleEntryCreate):
+        # 1. Check hours between 8-20
+        if not (8 <= entry_data.start_hour < 20) or not (9 <= entry_data.end_hour <= 20):
+            raise HTTPException(status_code=400, detail="Classes must be scheduled between 8 and 20.")
 
-router = APIRouter()
-        
-def create_schedule_entry(db: Session, entry: ScheduleEntryCreate):
-    # 1. Verifică dacă ora e între 8-20 și ziua între Monday-Friday
-    if not (8 <= entry.start_hour <= 20):
-        raise HTTPException(status_code=400, detail="Classes must be scheduled between 8-20.")
+        if entry_data.start_hour >= entry_data.end_hour:
+            raise HTTPException(status_code=400, detail="End hour must be after start hour.")
+
+        # 2. Check if day is Monday-Friday
+        if entry_data.day_of_week not in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]:
+            raise HTTPException(status_code=400, detail="Classes must be scheduled Monday to Friday.")
+
+        # 3. Check if room is available
+        entries_same_room = self.schedule_repo.get_all()
+        for existing in entries_same_room:
+            if (
+                existing.room_id == entry_data.room_id
+                and existing.day_of_week == entry_data.day_of_week
+                and not (entry_data.end_hour <= existing.start_hour or entry_data.start_hour >= existing.end_hour)
+            ):
+                raise HTTPException(status_code=400, detail="Room is already occupied at that time.")
+
+        # 4. Check if teacher is available
+        entries_same_teacher = self.schedule_repo.get_all()
+        for existing in entries_same_teacher:
+            if (
+                existing.teacher_id == entry_data.teacher_id
+                and existing.day_of_week == entry_data.day_of_week
+                and not (entry_data.end_hour <= existing.start_hour or entry_data.start_hour >= existing.end_hour)
+            ):
+                raise HTTPException(status_code=400, detail="Teacher is already scheduled at that time.")
+
+        # 5. Check if room type matches class type
+        room = self.room_repo.get_by_id(entry_data.room_id)
+        if not room:
+            raise HTTPException(status_code=404, detail="Room not found.")
+
+        if entry_data.class_type == "Course" and not room.is_course_room:
+            raise HTTPException(status_code=400, detail="Courses must be held in course rooms.")
+
+        if entry_data.class_type in ["Laboratory", "Seminar"] and room.is_course_room:
+            raise HTTPException(status_code=400, detail="Labs and seminars must be in lab rooms.")
+
+        # (Optional) Check if teacher actually teaches the subject — advanced rule
+        # (Optional) Check if group matches subject's year — advanced rule
+
+        # 6. If all validations pass, save entry
+        return self.schedule_repo.add(
+            day_of_week=entry_data.day_of_week,
+            start_hour=entry_data.start_hour,
+            end_hour=entry_data.end_hour,
+            subject_id=entry_data.subject_id,
+            room_id=entry_data.room_id,
+            teacher_id=entry_data.teacher_id,
+            class_type=entry_data.class_type,
+            student_group_id=entry_data.student_group_id,
+        )
     
-    if entry.day_of_week not in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]:
-        raise HTTPException(status_code=400, detail="Classes must be scheduled Monday-Friday.")
-
-    # 2. Verifică dacă sala e liberă în ziua și ora respectivă
-    existing_entry = schedule_repository.get_schedule_by_room_and_time(db, entry.room_id, entry.day_of_week, entry.start_hour)
-    if existing_entry:
-        raise HTTPException(status_code=400, detail="Room is already occupied at that time.")
+    def list_schedule_entries(self):
+        return self.schedule_repo.get_all()
     
-    # 3. Verifică dacă profesorul nu are deja alt curs atunci
-    prof_entry = schedule_repository.get_schedule_by_teacher_and_time(db, entry.teacher_id, entry.day_of_week, entry.start_hour)
-    if prof_entry:
-        raise HTTPException(status_code=400, detail="Teacher is already scheduled at that time.")
-
-    # 4. Verifică dacă tipul sălii e corect (ex: laborator pentru laborator, curs pentru curs)
-    room = room_repository.get_room_by_id(db, entry.room_id)
-    if entry.class_type == "Course" and room.type != "large":
-        raise HTTPException(status_code=400, detail="Courses must be held in large rooms.")
-    if entry.class_type == "Laboratory" and room.type != "small":
-        raise HTTPException(status_code=400, detail="Laboratories must be held in small rooms.")
-
-    # 5. Verifică dacă profesorul predă materia (optional daca vrei sa fii strict)
-    # 6. Verifică dacă grupa are acea materie anul respectiv (optional avansat)
-
-    # Dacă toate validările sunt ok, salvăm
-    return schedule_repository.create_schedule_entry(db, entry)
-
-@router.post("/teachers/", response_model=TeacherRead)
-def create_teacher_endpoint(teacher: TeacherCreate, db: Session = Depends(get_db)):
-    return create_teacher(db, teacher)
+    def create_teacher(self, teacher_data: TeacherCreate):
+        return self.teacher_repo.add(name=teacher_data.name)
+    
+    def list_teachers(self):
+        return self.teacher_repo.get_all()

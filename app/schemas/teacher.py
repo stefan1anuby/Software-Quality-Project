@@ -1,11 +1,13 @@
 from pydantic import BaseModel
 
-class TeacherCreate(BaseModel):
+class TeacherBase(BaseModel):
     name: str
 
-class TeacherRead(BaseModel):
+class TeacherCreate(TeacherBase):
+    pass
+
+class TeacherRead(TeacherBase):
     id: int
-    name: str
 
     class Config:
         orm_mode = True
