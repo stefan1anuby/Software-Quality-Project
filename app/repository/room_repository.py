@@ -11,3 +11,9 @@ class RoomRepository:
         self.db.commit()
         self.db.refresh(room)
         return room
+
+    def get_all(self) -> list[Room]:
+        return self.db.query(Room).all()
+
+    def get_by_id(self, room_id: int) -> Room | None:
+        return self.db.query(Room).filter(Room.id == room_id).first()
