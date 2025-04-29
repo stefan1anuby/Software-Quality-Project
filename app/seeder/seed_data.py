@@ -39,6 +39,7 @@ def seed_data():
             r1 = room_repo.add(name="Room A1", is_course_room=True)
             r2 = room_repo.add(name="Lab 101", is_course_room=False)
             r3 = room_repo.add(name="Lab 102", is_course_room=False)
+            r4 = room_repo.add(name="Room A2", is_course_room=True)
 
         # --- Seed Subjects ---
         if not subject_repo.get_all():
