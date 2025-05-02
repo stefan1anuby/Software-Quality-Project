@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create Schedule Entry</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 2rem;
+    }
+    form {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #f4f4f4;
+      padding: 2rem;
+      border-radius: 12px;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+      text-align: left;
+    }
+    input, select {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.3rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      font-size: 1.2rem;
+      margin-top: 1.5rem;
+      padding: 1rem 2rem;
+      cursor: pointer;
+      border-radius: 8px;
+      border: none;
+      background-color: #4CAF50;
+      color: white;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <h1>Create a New Schedule Entry</h1>
+  <form id="entry-form">
+    <label>Day of Week:
+      <select name="day_of_week" required>
+        <option value="Monday">Monday</option>
+        <option value="Tuesday">Tuesday</option>
+        <option value="Wednesday">Wednesday</option>
+        <option value="Thursday">Thursday</option>
+        <option value="Friday">Friday</option>
+      </select>
+    </label>
+
+    <label>Start Hour (0-23):
+      <input type="number" name="start_hour" min="0" max="23" required />
+    </label>
+
+    <label>End Hour (1-24):
+      <input type="number" name="end_hour" min="1" max="24" required />
+    </label>
+
+    <label>Teacher ID:
+      <input type="number" name="teacher_id" required />
+    </label>
+
+    <label>Room ID:
+      <input type="number" name="room_id" required />
+    </label>
+
+    <label>Subject ID:
+      <input type="number" name="subject_id" required />
+    </label>
+
+    <label>Class Type:
+      <select name="class_type" required>
+        <option value="Lecture">Lecture</option>
+        <option value="Lab">Lab</option>
+        <option value="Seminar">Seminar</option>
+      </select>
+    </label>
+
+    <label>Student Group ID (optional):
+      <input type="text" name="student_group_id" />
+    </label>
+
+    <button type="submit">Create Schedule</button>
+  </form>
+
+  <script src="js/add-entry.js"></script>
+</body>
+</html>
