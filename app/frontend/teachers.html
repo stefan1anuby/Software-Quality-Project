@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teachers</title>
+  <style>
+body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 2rem;
+    }
+    button {
+      font-size: 1.2rem;
+      margin: 1rem;
+      padding: 1rem 2rem;
+      cursor: pointer;
+      border-radius: 8px;
+      border: none;
+      background-color: #4CAF50;
+      color: white;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    table {
+      margin: 2rem auto;
+      border-collapse: collapse;
+      width: 90%;
+    }
+    th, td {
+      padding: 0.75rem 1rem;
+      border: 1px solid #ddd;
+    }
+    th {
+      background-color: #f7f7f7;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    h2 {
+      margin-top: 3rem;
+    }
+    pre {
+      text-align: left;
+      max-width: 90%;
+      margin: auto;
+      background-color: #f4f4f4;
+      padding: 1rem;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Teachers</h1>
+  <button onclick="location.href='index.html'">Home</button>
+  <button onclick="location.href='timetables.html'">Timetables</button>
+
+
+  <!-- Cute table display -->
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+      </tr>
+    </thead>
+    <tbody id="teachers-table-body"></tbody>
+  </table>
+
+  <!-- Raw JSON output for debugging -->
+  <h2>Raw JSON</h2>
+  <pre id="teachers-json"></pre>
+
+  <!-- Form to add a teacher -->
+  <form id="teacher-form">
+    <input type="text" id="teacher-name" placeholder="Teacher Name" required>
+    <button type="submit">Add Teacher</button>
+  </form>
+
+  <script src="js/teachers.js"></script>
+</body>
+</html>

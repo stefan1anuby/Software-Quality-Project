@@ -1,0 +1,9 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    padding: 0;
+  }
+  h1 {
+    margin-bottom: 20px;
+  }
+  /* Add grid/table styles for timetable, form styles, etc. */
