@@ -1,6 +1,9 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 
+from app.repository.student_group_repository import StudentGroupRepository
+from app.repository.student_year_repository import StudentYearRepository
+from app.repository.subject_repository import SubjectRepository
 from app.repository.teacher_repository import TeacherRepository
 from app.repository.room_repository import RoomRepository
 from app.repository.schedule_entry_repository import ScheduleEntryRepository
@@ -12,8 +15,11 @@ class TimetableService:
     def __init__(self, db: Session):
         self.db = db
         self.teacher_repo = TeacherRepository(db)
+        self.student_group_repo = StudentGroupRepository(db)  # Assuming you have a StudentGroupRepository
+        self.year_repo = StudentYearRepository(db)  # Assuming you have a StudentYearRepository, initialize it here
         self.room_repo = RoomRepository(db)
         self.schedule_repo = ScheduleEntryRepository(db)
+        self.subject_repo = SubjectRepository(db)  # Assuming you have a SubjectRepository, initialize it here
 
     def create_schedule_entry(self, entry_data: ScheduleEntryCreate):
         # 1. Check hours between 8-20
@@ -81,3 +87,18 @@ class TimetableService:
     
     def list_teachers(self):
         return self.teacher_repo.get_all()
+    
+    def list_groups(self):
+        return self.student_group_repo.get_all()
+    
+    def list_years(self):
+        return self.year_repo.get_all()
+    
+    def list_rooms(self):
+        return self.room_repo.get_all()
+    
+    
+    def list_subjects(self):
+        return self.subject_repo.get_all()
+    
+    
