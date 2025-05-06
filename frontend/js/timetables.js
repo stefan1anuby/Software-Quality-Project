@@ -2,29 +2,25 @@ const API_BASE = 'http://localhost:8000';
 
 // Function to load the timetable for the selected group
 async function loadTimetable() {
-  // Get the selected group name
   const groupName = document.getElementById('group-select').value;
-  
+
   try {
-    // Construct the URL with the selected group name
     const url = `${API_BASE}/api/v1/timetable/schedule/?group_name=${groupName}`;
-    console.log(`Request URL: ${url}`); // Log the URL to verify it's correct
+    console.log(`Request URL: ${url}`);
 
     const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
 
-    console.log('Fetched data:', data); // Log the fetched data
+    console.log('Fetched data:', data);
 
-    // Clear any existing rows in the timetable
     const tableBody = document.getElementById('timetable-body');
     tableBody.innerHTML = '';
 
     if (data.length === 0) {
-      tableBody.innerHTML = '<tr><td colspan="8">No timetable available for this group.</td></tr>';
+      tableBody.innerHTML = '<tr><td colspan="9">No timetable available for this group.</td></tr>';
     }
 
-    // Render each entry in the timetable
     data.forEach(entry => {
       const row = document.createElement('tr');
       row.innerHTML = `
@@ -36,11 +32,15 @@ async function loadTimetable() {
         <td>${entry.room_id}</td>
         <td>${entry.teacher_id}</td>
         <td>${entry.student_group_id !== null ? entry.student_group_id : '-'}</td>
-      `;
+        <td>
+          <button type="button" onclick="deleteEntry(${entry.id})" 
+            style="background-color:#d9534f; color:white; border:none; padding:0.5rem 1rem; border-radius:6px;">
+            Delete
+          </button>
+        </td>`;
       tableBody.appendChild(row);
     });
 
-    // Render raw JSON response in the <pre> element
     document.getElementById('timetable-raw').textContent = JSON.stringify(data, null, 2);
 
   } catch (err) {
@@ -49,8 +49,41 @@ async function loadTimetable() {
   }
 }
 
+// Function to delete a schedule entry by ID
+async function deleteEntry(id) {
+  if (!confirm(`Are you sure you want to delete schedule entry ID ${id}?`)) return;
+
+  try {
+    const res = await fetch(`${API_BASE}/api/v1/timetable/schedule/${id}`, {
+      method: 'DELETE'
+    });
+
+    if (res.status === 204) {
+      alert(`Entry ${id} deleted successfully.`);
+      loadTimetable(); // Reload the table
+    } else {
+      const err = await res.json();
+      throw new Error(err.detail || 'Failed to delete entry.');
+    }
+  } catch (err) {
+    alert('Error: ' + err.message);
+  }
+}
+
 // Automatically load timetable when page is ready
 window.addEventListener('DOMContentLoaded', () => {
-  // Initial load for the default group (Group A)
   loadTimetable();
+
+  // ✅ ADDITION: Handle form-based deletion
+  const deleteForm = document.getElementById('delete-form');
+  if (deleteForm) {
+    deleteForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const idInput = document.getElementById('delete-id');
+      const id = parseInt(idInput.value);
+      if (!id) return alert('Please enter a valid ID.');
+      await deleteEntry(id);
+      e.target.reset();
+    });
+  }
 });

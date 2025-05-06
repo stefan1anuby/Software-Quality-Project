@@ -114,5 +114,11 @@ class TimetableService:
         if not group:
             raise HTTPException(status_code=404, detail="Group not found.")
         return self.schedule_repo.get_by_group_id(group.id)
-    
+
+    def delete_schedule_entry(self, schedule_id: int) -> bool:
+        success = self.schedule_repo.delete(schedule_id)
+        if not success:
+            raise HTTPException(status_code=404, detail="Schedule entry not found.")
+        return True
+
     

@@ -49,6 +49,16 @@
       padding: 1rem;
       border-radius: 6px;
     }
+    form {
+      margin-top: 2rem;
+    }
+    input {
+      padding: 0.5rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-right: 1rem;
+    }
   </style>
 </head>
 <body>
@@ -62,7 +72,6 @@
     <option value="A">Group A</option>
     <option value="B">Group B</option>
     <option value="C">Group C</option>
-    <!-- Add more options here if you have other groups -->
   </select>
   <button onclick="loadTimetable()">Load Timetable</button>
 
@@ -77,6 +86,7 @@
         <th>Room</th>
         <th>Teacher</th>
         <th>Group</th>
+        <th>Action</th>
       </tr>
     </thead>
     <tbody id="timetable-body"></tbody>
