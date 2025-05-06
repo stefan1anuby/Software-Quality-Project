@@ -14,6 +14,9 @@ class StudentGroupRepository:
 
     def get_by_id(self, group_id: int) -> StudentGroup | None:
         return self.db.query(StudentGroup).filter(StudentGroup.id == group_id).first()
+    
+    def get_by_name(self, name: str) -> StudentGroup | None:
+        return self.db.query(StudentGroup).filter(StudentGroup.letter == name).first()
 
     def get_all(self) -> list[StudentGroup]:
         return self.db.query(StudentGroup).all()
