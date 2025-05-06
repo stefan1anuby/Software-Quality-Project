@@ -1,14 +1,30 @@
 const API_BASE = 'http://localhost:8000';
 
+// Function to load the timetable for the selected group
 async function loadTimetable() {
+  // Get the selected group name
+  const groupName = document.getElementById('group-select').value;
+  
   try {
-    const res = await fetch(`${API_BASE}/api/v1/timetable/schedule/`);
+    // Construct the URL with the selected group name
+    const url = `${API_BASE}/api/v1/timetable/schedule/?group_name=${groupName}`;
+    console.log(`Request URL: ${url}`); // Log the URL to verify it's correct
+
+    const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
 
-    // Render table
+    console.log('Fetched data:', data); // Log the fetched data
+
+    // Clear any existing rows in the timetable
     const tableBody = document.getElementById('timetable-body');
     tableBody.innerHTML = '';
+
+    if (data.length === 0) {
+      tableBody.innerHTML = '<tr><td colspan="8">No timetable available for this group.</td></tr>';
+    }
+
+    // Render each entry in the timetable
     data.forEach(entry => {
       const row = document.createElement('tr');
       row.innerHTML = `
@@ -24,7 +40,7 @@ async function loadTimetable() {
       tableBody.appendChild(row);
     });
 
-    // Render raw JSON
+    // Render raw JSON response in the <pre> element
     document.getElementById('timetable-raw').textContent = JSON.stringify(data, null, 2);
 
   } catch (err) {
@@ -33,4 +49,8 @@ async function loadTimetable() {
   }
 }
 
-window.addEventListener('DOMContentLoaded', loadTimetable);
+// Automatically load timetable when page is ready
+window.addEventListener('DOMContentLoaded', () => {
+  // Initial load for the default group (Group A)
+  loadTimetable();
+});

@@ -56,6 +56,16 @@
   <button onclick="location.href='index.html'">Home</button>
   <button onclick="location.href='teachers.html'">Teachers</button>
 
+  <!-- Dropdown to select group -->
+  <label for="group-select">Choose a Group: </label>
+  <select id="group-select">
+    <option value="A">Group A</option>
+    <option value="B">Group B</option>
+    <option value="C">Group C</option>
+    <!-- Add more options here if you have other groups -->
+  </select>
+  <button onclick="loadTimetable()">Load Timetable</button>
+
   <table>
     <thead>
       <tr>
