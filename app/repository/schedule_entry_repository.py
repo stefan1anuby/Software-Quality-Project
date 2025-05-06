@@ -33,6 +33,9 @@ class ScheduleEntryRepository:
 
     def get_by_id(self, schedule_id: int) -> ScheduleEntry | None:
         return self.db.query(ScheduleEntry).filter(ScheduleEntry.id == schedule_id).first()
+    
+    def get_by_group_id(self, group_id: int) -> list[ScheduleEntry]:
+        return self.db.query(ScheduleEntry).filter(ScheduleEntry.student_group_id == group_id).all()
 
     def get_all(self) -> list[ScheduleEntry]:
         return self.db.query(ScheduleEntry).all()

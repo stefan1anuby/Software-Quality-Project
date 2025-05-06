@@ -109,4 +109,10 @@ class TimetableService:
     def list_subjects(self):
         return self.subject_repo.get_all()
     
+    def list_schedule_entries_by_group(self, group_name: str):
+        group = self.student_group_repo.get_by_name(group_name)
+        if not group:
+            raise HTTPException(status_code=404, detail="Group not found.")
+        return self.schedule_repo.get_by_group_id(group.id)
+    
     

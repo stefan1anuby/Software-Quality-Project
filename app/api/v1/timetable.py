@@ -53,6 +53,13 @@ def create_schedule_entry_endpoint(entry: ScheduleEntryCreate, db: Session = Dep
     return service.create_schedule_entry(entry)
 
 @router.get("/schedule/", response_model=List[ScheduleEntryRead])
-def list_schedule_entries_endpoint(db: Session = Depends(get_db)):
+def list_schedule_entries_endpoint(
+    group_name: str = None, db: Session = Depends(get_db)
+):
+    """
+    List schedule entries. Optionally filter by group name.
+    """
     service = TimetableService(db)
+    if group_name:
+        return service.list_schedule_entries_by_group(group_name)
     return service.list_schedule_entries()

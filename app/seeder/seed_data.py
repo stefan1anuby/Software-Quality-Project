@@ -47,12 +47,14 @@ def seed_data():
             subj1 = subject_repo.add(
                 course_teacher_id=t1.id,
                 student_year_id=year1.id,
+                name="Mathematics",
                 seminar_lab_teacher_ids=[t2.id, t3.id]
             )
             # Subject 2: for year 2, course by t2, labs by t3
             subj2 = subject_repo.add(
                 course_teacher_id=t2.id,
                 student_year_id=year2.id,
+                name="Operating Systems",
                 seminar_lab_teacher_ids=[t3.id]
             )
 
