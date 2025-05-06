@@ -6,10 +6,11 @@ class SubjectRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def add(self, course_teacher_id: int, student_year_id: int, seminar_lab_teacher_ids: list[int] = []) -> Subject:
+    def add(self, course_teacher_id: int, student_year_id: int, name: str, seminar_lab_teacher_ids: list[int] = []) -> Subject:
         subject = Subject(
             course_teacher_id=course_teacher_id,
-            student_year_id=student_year_id
+            student_year_id=student_year_id,
+            name=name,
         )
         self.db.add(subject)
         self.db.commit()

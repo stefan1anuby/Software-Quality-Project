@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from typing import List
 
 class SubjectBase(BaseModel):
+    name: str
     course_teacher_id: int
     student_year_id: int
     seminar_lab_teacher_ids: List[int] = []

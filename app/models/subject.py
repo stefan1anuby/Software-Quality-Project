@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, ForeignKey, Table
+from sqlalchemy import Column, Integer, ForeignKey, String, Table
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 
@@ -15,7 +15,7 @@ class Subject(Base):
     id = Column(Integer, primary_key=True, index=True)
     course_teacher_id = Column(Integer, ForeignKey("teachers.id"), nullable=False)
     student_year_id = Column(Integer, ForeignKey("student_years.id"), nullable=False)
-
+    name = Column(String, unique=True, nullable=False)
     course_teacher = relationship("Teacher", foreign_keys=[course_teacher_id])
     seminar_lab_teachers = relationship("Teacher", secondary=subject_teacher_association)
     student_year = relationship("StudentYear")
