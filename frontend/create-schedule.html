@@ -57,24 +57,36 @@
       </select>
     </label>
 
-    <label>Start Hour (0-23):
-      <input type="number" name="start_hour" min="0" max="23" required />
+    <label>Start Hour (8-18):
+      <input type="number" name="start_hour" min="8" max="18" required />
     </label>
 
-    <label>End Hour (1-24):
-      <input type="number" name="end_hour" min="1" max="24" required />
+    <label>End Hour (10-20):
+      <input type="number" name="end_hour" min="10" max="20" required />
     </label>
 
-    <label>Teacher ID:
-      <input type="number" name="teacher_id" required />
+    <label>Teacher:
+      <select name="teacher_id" id="teacher-select" required>
+        <option value="">Loading...</option>
+      </select>
     </label>
 
-    <label>Room ID:
-      <input type="number" name="room_id" required />
+    <label>Room:
+      <select name="room_id" id="room-select" required>
+        <option value="">Loading...</option>
+      </select>
     </label>
 
-    <label>Subject ID:
-      <input type="number" name="subject_id" required />
+    <label>Subject:
+      <select name="subject_id" id="subject-select" required>
+        <option value="">Loading...</option>
+      </select>
+    </label>
+
+    <label>Student Group (optional):
+      <select name="letter" id="group-select">
+        <option value="">-- None --</option>
+      </select>
     </label>
 
     <label>Class Type:
@@ -83,10 +95,6 @@
         <option value="Lab">Lab</option>
         <option value="Seminar">Seminar</option>
       </select>
-    </label>
-
-    <label>Student Group ID (optional):
-      <input type="number" name="student_group_id" />
     </label>
 
     <button type="submit">Create Schedule</button>
@@ -129,6 +137,42 @@
         alert('Error: ' + error.message);
       }
     });
+
+    const API_BASE = 'http://localhost:8000';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadDropdowns();
+    });
+
+    async function loadDropdowns() {
+      await Promise.all([
+        populateSelect('teacher-select', 'teachers', 'name'),
+        populateSelect('room-select', 'rooms', 'id'),     // replace 'id' with room name if available
+        populateSelect('subject-select', 'subjects', 'name'),
+        populateSelect('group-select', 'groups', 'letter')
+      ]);
+    }
+
+    async function populateSelect(selectId, endpoint, labelField) {
+      const select = document.getElementById(selectId);
+      select.innerHTML = '<option value="">Loading...</option>';
+
+      try {
+        const res = await fetch(`${API_BASE}/api/v1/timetable/${endpoint}/`);
+        const data = await res.json();
+
+        select.innerHTML = '<option value="">-- Select --</option>';
+        data.forEach(item => {
+          const option = document.createElement('option');
+          option.value = item.id;
+          option.textContent = `${item[labelField]} (ID: ${item.id})`;
+          select.appendChild(option);
+        });
+      } catch (err) {
+        select.innerHTML = '<option value="">Failed to load</option>';
+        console.error(`Error loading ${endpoint}:`, err);
+      }
+    }
   </script>
 </body>
 </html>
