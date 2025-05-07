@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Teachers</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>University Timetable</title>
   <style>
-body {
+    body {
       font-family: sans-serif;
       text-align: center;
       padding: 2rem;
@@ -49,35 +49,52 @@ body {
       padding: 1rem;
       border-radius: 6px;
     }
+    form {
+      margin-top: 2rem;
+    }
+    input {
+      padding: 0.5rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-right: 1rem;
+    }
   </style>
 </head>
 <body>
-  <h1>Teachers</h1>
+  <h1>University Timetable</h1>
   <button onclick="location.href='index.html'">Home</button>
-  <button onclick="location.href='timetables.html'">Timetables</button>
+  <button onclick="location.href='teachers.html'">Teachers</button>
 
+  <!-- Dropdown to select group -->
+  <label for="group-select">Choose a Group: </label>
+  <select id="group-select">
+    <option value="A">Group A</option>
+    <option value="B">Group B</option>
+    <option value="C">Group C</option>
+  </select>
+  <button onclick="loadTimetable()">Load Timetable</button>
 
-  <!-- Cute table display -->
   <table>
     <thead>
       <tr>
         <th>ID</th>
-        <th>Name</th>
+        <th>Day</th>
+        <th>Start</th>
+        <th>End</th>
+        <th>Subject</th>
+        <th>Room</th>
+        <th>Teacher</th>
+        <th>Group</th>
+        <th>Action</th>
       </tr>
     </thead>
-    <tbody id="teachers-table-body"></tbody>
+    <tbody id="timetable-body"></tbody>
   </table>
 
-  <!-- Raw JSON output for debugging -->
   <h2>Raw JSON</h2>
-  <pre id="teachers-json"></pre>
+  <pre id="timetable-raw">Loading...</pre>
 
-  <!-- Form to add a teacher -->
-  <form id="teacher-form">
-    <input type="text" id="teacher-name" placeholder="Teacher Name" required>
-    <button type="submit">Add Teacher</button>
-  </form>
-
-  <script src="js/teachers.js"></script>
+  <script src="js/timetables.js"></script>
 </body>
 </html>

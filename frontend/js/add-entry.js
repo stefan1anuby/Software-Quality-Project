@@ -1,5 +1,5 @@
 // Handle form submission to create a new schedule entry
-const API_BASE = 'http://127.0.0.1:8000';
+const API_BASE = 'http://localhost:8000';
 
 document.getElementById('entry-form').addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -16,7 +16,7 @@ document.getElementById('entry-form').addEventListener('submit', async (e) => {
   };
 
   try {
-    const res = await fetch(`${API_BASE}/api/v1/timetable/`, {
+      const res = await fetch(`${API_BASE}/api/v1/timetable/schedule/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)

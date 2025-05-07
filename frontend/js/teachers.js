@@ -30,24 +30,5 @@ document.addEventListener('DOMContentLoaded', () => {
       jsonOutput.textContent = err.message;
     }
   }
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const name = nameInput.value.trim();
-    if (!name) return;
-
-    try {
-      await fetch(`${API_BASE}/api/v1/timetable/teachers/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name })
-      });
-      form.reset();
-      loadTeachers();
-    } catch (err) {
-      alert('Error adding teacher: ' + err.message);
-    }
-  });
-
   loadTeachers();
-});
+  });

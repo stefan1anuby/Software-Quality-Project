@@ -39,3 +39,11 @@ class ScheduleEntryRepository:
 
     def get_all(self) -> list[ScheduleEntry]:
         return self.db.query(ScheduleEntry).all()
+
+    def delete(self, schedule_id: int) -> bool:
+        schedule_entry = self.get_by_id(schedule_id)
+        if schedule_entry:
+            self.db.delete(schedule_entry)
+            self.db.commit()
+            return True
+        return False

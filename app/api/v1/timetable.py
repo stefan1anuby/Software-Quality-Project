@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 
@@ -63,3 +63,10 @@ def list_schedule_entries_endpoint(
     if group_name:
         return service.list_schedule_entries_by_group(group_name)
     return service.list_schedule_entries()
+
+@router.delete("/schedule/{schedule_id}", status_code=204)
+def delete_schedule_entry_endpoint(schedule_id: int, db: Session = Depends(get_db)):
+    service = TimetableService(db)
+    success = service.delete_schedule_entry(schedule_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Schedule entry not found")
