@@ -222,8 +222,11 @@ Make sure the app is running locally on port `8000` for the collection to work c
 ![image](https://github.com/user-attachments/assets/4875d2f0-3b02-4a1d-a48e-1af9f6b024ec)
 
 ---
+🖥️ Swagger Documentation
+![image](https://github.com/user-attachments/assets/e6b470f8-5cc5-4e73-abd7-24f5dad7e1f1)
 
-
+![image](https://github.com/user-attachments/assets/01eba3c1-b86d-4877-b3e6-fe22ae3a4460)
+---
 ## 🎓 Future Improvements
 
 * UI for Admins & Students
