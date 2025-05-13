@@ -26,7 +26,7 @@ def db():
 def repo(db):
     return StudentGroupRepository(db)
 
-# === ✅ VALID CASE ===
+# === VALID CASE ===
 
 def test_add_valid_student_group(repo, db):
     year = db.query(StudentYear).first()
@@ -52,7 +52,7 @@ def test_get_all_groups(repo):
     assert isinstance(groups, list)
     assert any(g.letter == "D" for g in groups)
 
-# === ❌ CONSTRAINT-DRIVEN FAILURES ===
+# === CONSTRAINT-DRIVEN FAILURES ===
 
 def test_add_group_null_letter_fails(repo, db):
     with pytest.raises(exc.IntegrityError):

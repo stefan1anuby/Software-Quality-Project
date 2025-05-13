@@ -31,7 +31,7 @@ def db():
 def repo(db):
     return SubjectRepository(db)
 
-# === ✅ VALID CASES ===
+# === VALID CASES ===
 
 def test_add_subject_without_seminar_teachers(repo, db):
     course_teacher = db.query(Teacher).filter_by(name="Course Teacher").first()
@@ -75,7 +75,7 @@ def test_get_all_subjects(repo):
     assert isinstance(subjects, list)
     assert len(subjects) >= 1
 
-# === ❌ FAILURE-DRIVEN TESTS ===
+# === FAILURE-DRIVEN TESTS ===
 
 def test_add_subject_with_null_name_fails(db):
     with pytest.raises(exc.IntegrityError):

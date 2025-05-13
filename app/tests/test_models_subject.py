@@ -24,7 +24,7 @@ def db():
     yield session
     session.close()
 
-# === ✅ VALID CASE ===
+# === VALID CASE ===
 
 def test_create_valid_subject(db):
     teacher = db.query(Teacher).first()
@@ -42,7 +42,7 @@ def test_create_valid_subject(db):
     assert subject.id is not None
     assert subject.name == "Mathematics"
 
-# === ❌ FAILURES EXPECTED IF NO CONSTRAINTS ===
+# === FAILURES EXPECTED IF NO CONSTRAINTS ===
 
 def test_create_subject_null_name_fails(db):
     teacher = db.query(Teacher).first()
