@@ -24,15 +24,18 @@ def test_create_teacher_model(db):
     assert teacher.id is not None
     assert teacher.name == "Test Model Teacher"
     
-def test_teacher_name_too_long(db):
-    long_name = "A" * 100000 
+def test_teacher_name_too_long_should_fail(db):
+    long_name = "A" * 100000  # Intentionally excessive
     teacher = Teacher(name=long_name)
     db.add(teacher)
     db.commit()
     db.refresh(teacher)
 
-    assert teacher.id is not None
-    assert len(teacher.name) == 100000  # If no constraint, this will pass
+    # This test should FAIL if no constraint is set
+    assert len(teacher.name) <= 255, (
+        "Teacher name too long — model should define String(255) or add CheckConstraint"
+    )
+
     
 def test_teacher_empty_name_fails(db):
     with pytest.raises(exc.IntegrityError):

@@ -58,24 +58,36 @@ def test_add_teacher_null(repo):
         repo.db.commit()
     repo.db.rollback()
 
-def test_add_teacher_long_name(repo):
-    name = "A" * 1000  # SQLite doesn't enforce length unless specified
-    teacher = repo.add(name)
-    assert teacher.name == name
-    assert len(teacher.name) == 1000
+def test_add_teacher_long_name_should_fail(repo):
+    long_name = "A" * 1000  # Exceeds reasonable limit (e.g., 255)
+    teacher = repo.add(long_name)
+
+    # This should FAIL unless you explicitly constrain the field in the model
+    assert len(teacher.name) <= 255, (
+        "Teacher name exceeded expected max length — model should define String(255) or CheckConstraint"
+    )
+
 
 def test_add_teacher_unicode(repo):
     teacher = repo.add("李小龍 – 🐉 Bruce Lee")
     assert "Bruce Lee" in teacher.name
 
-def test_add_teacher_whitespace(repo):
+def test_add_teacher_whitespace_should_fail(repo):
     teacher = repo.add("     ")
-    assert teacher.name.strip() == "" or teacher.name == "     "  # depends on policy
 
-def test_add_teacher_special_chars(repo):
+    # This should fail unless your model or Pydantic schema strips or rejects whitespace-only names
+    assert teacher.name.strip() != "", (
+        "Teacher name contains only whitespace — you should enforce a non-blank constraint"
+    )
+
+def test_add_teacher_special_chars_should_fail(repo):
     name = "!@#$%^&*()_+-=~`[]{}|;:'\",.<>/?"
     teacher = repo.add(name)
-    assert teacher.name == name
+
+    # This should fail unless you explicitly allow symbols
+    assert teacher.name.isalpha(), (
+        "Teacher name contains non-alphabetic characters — enforce a character whitelist or regex"
+    )
 
 def test_add_teacher_sql_injection_input(repo):
     malicious = "'; DROP TABLE teachers; --"
