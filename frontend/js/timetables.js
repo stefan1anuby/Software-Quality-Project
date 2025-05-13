@@ -74,7 +74,6 @@ async function deleteEntry(id) {
 window.addEventListener('DOMContentLoaded', () => {
   loadTimetable();
 
-  // ✅ ADDITION: Handle form-based deletion
   const deleteForm = document.getElementById('delete-form');
   if (deleteForm) {
     deleteForm.addEventListener('submit', async (e) => {

@@ -117,6 +117,15 @@
         student_group_id: form.student_group_id.value ? parseInt(form.student_group_id.value) : null
       };
 
+      // Manual validation check
+      const requiredFields = ['day_of_week', 'start_hour', 'end_hour', 'teacher_id', 'room_id', 'subject_id', 'class_type'];
+      const hasEmptyRequired = requiredFields.some(field => !data[field]);
+
+      if (hasEmptyRequired) {
+        alert('Please fill in all required fields');
+        return;
+      }
+
       try {
         const response = await fetch('http://localhost:8000/api/v1/timetable/schedule/', {
           method: 'POST',

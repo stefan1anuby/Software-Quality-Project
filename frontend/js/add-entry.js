@@ -4,15 +4,16 @@ const API_BASE = 'http://localhost:8000';
 document.getElementById('entry-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   // TODO: collect actual field values
+  const form = e.target;
   const data = {
-    day_of_week: e.target.day_of_week.value,
-    start_hour: parseInt(e.target.start_hour.value),
-    end_hour: parseInt(e.target.end_hour.value),
-    teacher_id: parseInt(e.target.teacher_id.value),
-    room_id: parseInt(e.target.room_id.value),
-    subject_id: parseInt(e.target.subject_id.value),
-    class_type: e.target.class_type.value,
-    student_group_id: e.target.student_group_id.value || null,
+    day_of_week: form.elements['day_of_week'].value,
+    start_hour: form.elements['start_hour'].value,
+    end_hour: form.elements['end_hour'].value,
+    teacher_id: form.elements['teacher_id'].value,
+    room_id: form.elements['room_id'].value,
+    subject_id: form.elements['subject_id'].value,
+    letter: form.elements['letter'].value,
+    class_type: form.elements['class_type'].value,
   };
 
   try {
