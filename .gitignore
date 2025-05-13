@@ -2,4 +2,3 @@
 *.db
 /venv
 node_modules/
-frontend/tests/

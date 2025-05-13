@@ -15,10 +15,8 @@
     "@testing-library/dom": "^10.4.0",
     "babel-jest": "^29.7.0",
     "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0"
-  },
-  "type": "module",
-  "dependencies": {
+    "jest-environment-jsdom": "^29.7.0",
     "util": "^0.12.5"
-  }
+  },
+  "type": "module"
 }
