@@ -1,7 +1,7 @@
 const API_BASE = 'http://localhost:8000';
 
 // Function to load the timetable for the selected group
-async function loadTimetable() {
+export const loadTimetable = async () => {
   const groupName = document.getElementById('group-select').value;
 
   try {
@@ -50,7 +50,7 @@ async function loadTimetable() {
 }
 
 // Function to delete a schedule entry by ID
-async function deleteEntry(id) {
+export const deleteEntry = async (id) => {
   if (!confirm(`Are you sure you want to delete schedule entry ID ${id}?`)) return;
 
   try {
@@ -74,7 +74,6 @@ async function deleteEntry(id) {
 window.addEventListener('DOMContentLoaded', () => {
   loadTimetable();
 
-  // ✅ ADDITION: Handle form-based deletion
   const deleteForm = document.getElementById('delete-form');
   if (deleteForm) {
     deleteForm.addEventListener('submit', async (e) => {
