@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, ForeignKey, String, Table
+from sqlalchemy import CheckConstraint, Column, Integer, ForeignKey, String, Table
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 
@@ -19,3 +19,9 @@ class Subject(Base):
     course_teacher = relationship("Teacher", foreign_keys=[course_teacher_id])
     seminar_lab_teachers = relationship("Teacher", secondary=subject_teacher_association)
     student_year = relationship("StudentYear")
+
+    __table_args__ = (
+        CheckConstraint("name IS NOT NULL", name="subject_name_not_null"),
+        CheckConstraint("course_teacher_id IS NOT NULL", name="course_teacher_not_null"),
+        CheckConstraint("student_year_id IS NOT NULL", name="student_year_not_null")
+    )
