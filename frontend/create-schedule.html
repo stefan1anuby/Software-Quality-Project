@@ -1,187 +1,97 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Create Schedule Entry</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      text-align: center;
-      padding: 2rem;
+<script>
+  function assert(condition, message) {
+    if (!condition) {
+      throw new Error("Assertion failed: " + message);
     }
-    form {
-      max-width: 600px;
-      margin: 0 auto;
-      background: #f4f4f4;
-      padding: 2rem;
-      border-radius: 12px;
-    }
-    label {
-      display: block;
-      margin-top: 1rem;
-      text-align: left;
-    }
-    input, select {
-      width: 100%;
-      padding: 0.5rem;
-      margin-top: 0.3rem;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-    button {
-      font-size: 1.2rem;
-      margin-top: 1.5rem;
-      padding: 1rem 2rem;
-      cursor: pointer;
-      border-radius: 8px;
-      border: none;
-      background-color: #4CAF50;
-      color: white;
-    }
-    button:hover {
-      background-color: #45a049;
-    }
-  </style>
-</head>
-<body>
-  <h1>Create a New Schedule Entry</h1>
-  <form id="entry-form">
-    <label>Day of Week:
-      <select name="day_of_week" required>
-        <option value="Monday">Monday</option>
-        <option value="Tuesday">Tuesday</option>
-        <option value="Wednesday">Wednesday</option>
-        <option value="Thursday">Thursday</option>
-        <option value="Friday">Friday</option>
-      </select>
-    </label>
+  }
 
-    <label>Start Hour (8-18):
-      <input type="number" name="start_hour" min="8" max="18" required />
-    </label>
+  const API_BASE = 'http://localhost:8000';
 
-    <label>End Hour (10-20):
-      <input type="number" name="end_hour" min="10" max="20" required />
-    </label>
+  document.getElementById('entry-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-    <label>Teacher:
-      <select name="teacher_id" id="teacher-select" required>
-        <option value="">Loading...</option>
-      </select>
-    </label>
+    const form = e.target;
 
-    <label>Room:
-      <select name="room_id" id="room-select" required>
-        <option value="">Loading...</option>
-      </select>
-    </label>
+    const data = {
+      day_of_week: form.day_of_week.value,
+      start_hour: parseInt(form.start_hour.value),
+      end_hour: parseInt(form.end_hour.value),
+      teacher_id: parseInt(form.teacher_id.value),
+      room_id: parseInt(form.room_id.value),
+      subject_id: parseInt(form.subject_id.value),
+      class_type: form.class_type.value,
+      student_group_id: form.student_group_id?.value ? parseInt(form.student_group_id.value) : null
+    };
 
-    <label>Subject:
-      <select name="subject_id" id="subject-select" required>
-        <option value="">Loading...</option>
-      </select>
-    </label>
+    // Assertions for required values
+    try {
+      assert(data.day_of_week, 'Day of week is required');
+      assert(Number.isInteger(data.start_hour), 'Start hour must be a number');
+      assert(Number.isInteger(data.end_hour), 'End hour must be a number');
+      assert(Number.isInteger(data.teacher_id), 'Teacher ID must be a number');
+      assert(Number.isInteger(data.room_id), 'Room ID must be a number');
+      assert(Number.isInteger(data.subject_id), 'Subject ID must be a number');
+      assert(data.class_type, 'Class type is required');
+      assert(data.start_hour >= 8 && data.start_hour <= 18, 'Start hour out of bounds');
+      assert(data.end_hour >= 10 && data.end_hour <= 20, 'End hour out of bounds');
+      assert(data.end_hour > data.start_hour, 'End hour must be after start hour');
 
-    <label>Student Group (optional):
-      <select name="letter" id="group-select">
-        <option value="">-- None --</option>
-      </select>
-    </label>
+      const response = await fetch(`${API_BASE}/api/v1/timetable/schedule/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
 
-    <label>Class Type:
-      <select name="class_type" required>
-        <option value="Lecture">Lecture</option>
-        <option value="Lab">Lab</option>
-        <option value="Seminar">Seminar</option>
-      </select>
-    </label>
-
-    <button type="submit">Create Schedule</button>
-  </form>
-
-  <script>
-    document.getElementById('entry-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const form = e.target;
-
-      const data = {
-        day_of_week: form.day_of_week.value,
-        start_hour: parseInt(form.start_hour.value),
-        end_hour: parseInt(form.end_hour.value),
-        teacher_id: parseInt(form.teacher_id.value),
-        room_id: parseInt(form.room_id.value),
-        subject_id: parseInt(form.subject_id.value),
-        class_type: form.class_type.value,
-        student_group_id: form.student_group_id.value ? parseInt(form.student_group_id.value) : null
-      };
-
-      // Manual validation check
-      const requiredFields = ['day_of_week', 'start_hour', 'end_hour', 'teacher_id', 'room_id', 'subject_id', 'class_type'];
-      const hasEmptyRequired = requiredFields.some(field => !data[field]);
-
-      if (hasEmptyRequired) {
-        alert('Please fill in all required fields');
-        return;
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || 'Unknown error');
       }
 
-      try {
-        const response = await fetch('http://localhost:8000/api/v1/timetable/schedule/', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        });
-
-        if (!response.ok) {
-          const error = await response.json();
-          throw new Error(error.detail || 'Unknown error');
-        }
-
-        alert('Schedule entry created successfully!');
-        form.reset();
-      } catch (error) {
-        alert('Error: ' + error.message);
-      }
-    });
-
-    const API_BASE = 'http://localhost:8000';
-
-    document.addEventListener('DOMContentLoaded', async () => {
-      await loadDropdowns();
-    });
-
-    async function loadDropdowns() {
-      await Promise.all([
-        populateSelect('teacher-select', 'teachers', 'name'),
-        populateSelect('room-select', 'rooms', 'id'),     // replace 'id' with room name if available
-        populateSelect('subject-select', 'subjects', 'name'),
-        populateSelect('group-select', 'groups', 'letter')
-      ]);
+      alert('Schedule entry created successfully!');
+      form.reset();
+    } catch (error) {
+      alert('Error: ' + error.message);
     }
+  });
 
-    async function populateSelect(selectId, endpoint, labelField) {
-      const select = document.getElementById(selectId);
-      select.innerHTML = '<option value="">Loading...</option>';
+  document.addEventListener('DOMContentLoaded', async () => {
+    await loadDropdowns();
+  });
 
-      try {
-        const res = await fetch(`${API_BASE}/api/v1/timetable/${endpoint}/`);
-        const data = await res.json();
+  async function loadDropdowns() {
+    await Promise.all([
+      populateSelect('teacher-select', 'teachers', 'name'),
+      populateSelect('room-select', 'rooms', 'id'),     // You can change 'id' to 'name' if needed
+      populateSelect('subject-select', 'subjects', 'name'),
+      populateSelect('group-select', 'groups', 'letter')
+    ]);
+  }
 
-        select.innerHTML = '<option value="">-- Select --</option>';
-        data.forEach(item => {
-          const option = document.createElement('option');
-          option.value = item.id;
-          option.textContent = `${item[labelField]} (ID: ${item.id})`;
-          select.appendChild(option);
-        });
-      } catch (err) {
-        select.innerHTML = '<option value="">Failed to load</option>';
-        console.error(`Error loading ${endpoint}:`, err);
-      }
+  async function populateSelect(selectId, endpoint, labelField) {
+    const select = document.getElementById(selectId);
+    select.innerHTML = '<option value="">Loading...</option>';
+
+    try {
+      const res = await fetch(`${API_BASE}/api/v1/timetable/${endpoint}/`);
+      const data = await res.json();
+
+      assert(Array.isArray(data), `${endpoint} data must be an array`);
+
+      select.innerHTML = '<option value="">-- Select --</option>';
+      data.forEach(item => {
+        assert(item.id !== undefined, `Item in ${endpoint} must have an id`);
+        assert(labelField in item, `Item in ${endpoint} must have field '${labelField}'`);
+
+        const option = document.createElement('option');
+        option.value = item.id;
+        option.textContent = `${item[labelField]} (ID: ${item.id})`;
+        select.appendChild(option);
+      });
+    } catch (err) {
+      select.innerHTML = '<option value="">Failed to load</option>';
+      console.error(`Error loading ${endpoint}:`, err);
     }
-  </script>
-</body>
-</html>
+  }
+</script>
