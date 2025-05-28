@@ -3,8 +3,10 @@ const API_BASE = 'http://127.0.0.1:8000';
 document.addEventListener('DOMContentLoaded', () => {
   const tableBody = document.getElementById('teachers-table-body');
   const jsonOutput = document.getElementById('teachers-json');
-  const form = document.getElementById('teacher-form');
-  const nameInput = document.getElementById('teacher-name');
+
+  // Preconditions
+  console.assert(tableBody, '#teachers-table-body is required');
+  console.assert(jsonOutput, '#teachers-json is required');
 
   async function loadTeachers() {
     try {
@@ -12,7 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!res.ok) throw new Error('Failed to fetch teachers');
       const teachers = await res.json();
 
-      // Clear and populate table
+      // Postconditions
+      console.assert(Array.isArray(teachers), 'Expected teachers to be an array');
+      console.assert(teachers.every(t => 'id' in t && 'name' in t), 'Each teacher must have id and name');
+
+      // Render table
       tableBody.innerHTML = '';
       teachers.forEach(teacher => {
         const row = document.createElement('tr');
@@ -23,12 +29,16 @@ document.addEventListener('DOMContentLoaded', () => {
         tableBody.appendChild(row);
       });
 
-      // Render raw JSON
+      // Invariant
+      console.assert(tableBody.children.length === teachers.length, 'Mismatch between table rows and teachers data');
+
       jsonOutput.textContent = JSON.stringify(teachers, null, 2);
     } catch (err) {
       tableBody.innerHTML = `<tr><td colspan="2">Error loading teachers</td></tr>`;
       jsonOutput.textContent = err.message;
+
+      console.assert(tableBody.innerHTML.includes('Error'), 'Error row not rendered properly');
     }
   }
   loadTeachers();
-  });
+});
