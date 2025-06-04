@@ -1,5 +1,9 @@
 ﻿# Software-Quality-Project
-# 📘 University Timetable API
+# 📘 University Timetable
+
+Documentation:
+
+https://docs.google.com/document/d/1VDCJv8Nussu3up19-q6V_Jq4Y7kc4qEdy_j4nTyD3zo/edit?usp=sharing
 
 A FastAPI-based backend for managing university timetable scheduling with validations, teacher and room constraints, and automatic conflict prevention.
 
